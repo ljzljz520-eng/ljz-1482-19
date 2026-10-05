@@ -2,8 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+ * 品牌令牌 · 编译时默认值（v1.0.0 内置兜底）
+ * 运行时由 /api/projects/:slug/theme.css 注入同名变量覆盖；
+ * 设备缓存旧包或接口不可用时，页面仍按本默认值渲染。
+ * ============================================================ */
 :root {
   color-scheme: light;
+  --brand-color-primary: #165dff;
+  --brand-color-primary-strong: #0e42d2;
+  --brand-color-accent: #ff7d00;
+  --brand-color-surface: #ffffff;
+  --brand-color-surface-soft: #f1f5ff;
+  --brand-color-surface-dark: #0b1220;
+  --brand-color-text: #0f172a;
+  --brand-color-text-secondary: #475569;
+  --brand-color-text-on-dark: #f8fafc;
+
+  --brand-button-primary-bg: #165dff;
+  --brand-button-primary-text: #ffffff;
+  --brand-button-primary-border: #165dff;
+  --brand-button-primary-hover-bg: #0e42d2;
+  --brand-button-primary-active-bg: #0a36a8;
+  --brand-button-primary-disabled-bg: #e2e8f0;
+  --brand-button-primary-disabled-text: #475569;
+  --brand-button-primary-radius: 12px;
+  --brand-button-secondary-bg: #ffffff;
+  --brand-button-secondary-text: #165dff;
+  --brand-button-secondary-border: #165dff;
+  --brand-button-secondary-hover-bg: #e8efff;
+  --brand-button-secondary-active-bg: #d1dfff;
+  --brand-button-secondary-disabled-bg: #e2e8f0;
+  --brand-button-secondary-disabled-text: #475569;
+  --brand-button-secondary-radius: 12px;
+  --brand-button-danger-bg: #dc2626;
+  --brand-button-danger-text: #ffffff;
+  --brand-button-danger-border: #dc2626;
+  --brand-button-danger-hover-bg: #b91c1c;
+  --brand-button-danger-active-bg: #991b1b;
+  --brand-button-danger-disabled-bg: #e2e8f0;
+  --brand-button-danger-disabled-text: #475569;
+  --brand-button-danger-radius: 12px;
+
+  --brand-steps-active-dot: #165dff;
+  --brand-steps-active-line: #165dff;
+  --brand-steps-active-label: #0f172a;
+  --brand-steps-completed-dot: #16a34a;
+  --brand-steps-completed-line: #16a34a;
+  --brand-steps-completed-label: #166534;
+  --brand-steps-pending-dot: #cbd5e1;
+  --brand-steps-pending-line: #e2e8f0;
+  --brand-steps-pending-label: #64748b;
+
+  --brand-asset-ready-bg: #dcfce7;
+  --brand-asset-ready-text: #166534;
+  --brand-asset-ready-border: #16a34a;
+  --brand-asset-processing-bg: #fef3c7;
+  --brand-asset-processing-text: #92400e;
+  --brand-asset-processing-border: #d97706;
+  --brand-asset-error-bg: #fee2e2;
+  --brand-asset-error-text: #7f1d1d;
+  --brand-asset-error-border: #dc2626;
+  --brand-asset-selected-bg: #e0e9ff;
+  --brand-asset-selected-text: #0e42d2;
+  --brand-asset-selected-border: #165dff;
+
+  --brand-export-badge-bg: #165dff;
+  --brand-export-badge-text: #ffffff;
+  --brand-export-badge-border: #0e42d2;
+  --brand-export-badge-radius: 999px;
+  --brand-export-subtitle-color: #ffe08a;
+  --brand-export-subtitle-bg: #0b1220;
+
+  --brand-focus-ring-color: #c2410c;
+  --brand-focus-ring-width: 3px;
+
+  /* 平台保留：系统错误语义（恒定，用户主题不可覆盖） */
+  --brand-system-error-bg: #dc2626;
+  --brand-system-error-text: #ffffff;
+  --brand-system-error-subtle: #fee2e2;
+  --brand-system-error-on-subtle: #7f1d1d;
 }
 
 body {
@@ -31,4 +109,107 @@ body {
 
 ::selection {
   background: rgba(22, 93, 255, 0.2);
+}
+
+/* ============================================================
+ * 品牌组件类（bk-*）：全部经由 var(--brand-*) 消费令牌，
+ * 运行时变量与编译时产物（asset.css）使用同一组类名与变量。
+ * ============================================================ */
+@layer components {
+  .bk-btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 font-semibold border transition-all duration-150 select-none;
+  }
+  .bk-btn:focus-visible {
+    outline: var(--brand-focus-ring-width) solid var(--brand-focus-ring-color);
+    outline-offset: 2px;
+  }
+  .bk-btn-primary {
+    background: var(--brand-button-primary-bg);
+    color: var(--brand-button-primary-text);
+    border-color: var(--brand-button-primary-border);
+    border-radius: var(--brand-button-primary-radius);
+  }
+  .bk-btn-primary:hover:not(:disabled) {
+    background: var(--brand-button-primary-hover-bg);
+  }
+  .bk-btn-primary:active:not(:disabled) {
+    background: var(--brand-button-primary-active-bg);
+  }
+  .bk-btn-secondary {
+    background: var(--brand-button-secondary-bg);
+    color: var(--brand-button-secondary-text);
+    border-color: var(--brand-button-secondary-border);
+    border-radius: var(--brand-button-secondary-radius);
+  }
+  .bk-btn-secondary:hover:not(:disabled) {
+    background: var(--brand-button-secondary-hover-bg);
+  }
+  .bk-btn-secondary:active:not(:disabled) {
+    background: var(--brand-button-secondary-active-bg);
+  }
+  .bk-btn-danger {
+    background: var(--brand-button-danger-bg);
+    color: var(--brand-button-danger-text);
+    border-color: var(--brand-button-danger-border);
+    border-radius: var(--brand-button-danger-radius);
+  }
+  .bk-btn-danger:hover:not(:disabled) {
+    background: var(--brand-button-danger-hover-bg);
+  }
+  .bk-btn-danger:active:not(:disabled) {
+    background: var(--brand-button-danger-active-bg);
+  }
+  .bk-btn:disabled {
+    background: var(--brand-button-primary-disabled-bg);
+    color: var(--brand-button-primary-disabled-text);
+    border-color: transparent;
+    cursor: not-allowed;
+  }
+
+  .bk-badge-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--brand-export-badge-bg);
+    color: var(--brand-export-badge-text);
+    border: 1px solid var(--brand-export-badge-border);
+    border-radius: var(--brand-export-badge-radius);
+  }
+
+  .bk-asset-chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-xl border;
+  }
+  .bk-asset-ready {
+    background: var(--brand-asset-ready-bg);
+    color: var(--brand-asset-ready-text);
+    border-color: var(--brand-asset-ready-border);
+  }
+  .bk-asset-processing {
+    background: var(--brand-asset-processing-bg);
+    color: var(--brand-asset-processing-text);
+    border-color: var(--brand-asset-processing-border);
+  }
+  .bk-asset-error {
+    background: var(--brand-asset-error-bg);
+    color: var(--brand-asset-error-text);
+    border-color: var(--brand-asset-error-border);
+  }
+  .bk-asset-selected {
+    background: var(--brand-asset-selected-bg);
+    color: var(--brand-asset-selected-text);
+    border-color: var(--brand-asset-selected-border);
+  }
+
+  .bk-subtitle-bar {
+    color: var(--brand-export-subtitle-color);
+    background: var(--brand-export-subtitle-bg);
+  }
+
+  .bk-focus-demo:focus-visible {
+    outline: var(--brand-focus-ring-width) solid var(--brand-focus-ring-color);
+    outline-offset: 2px;
+  }
 }

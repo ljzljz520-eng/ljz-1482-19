@@ -1,13 +1,56 @@
 version: "3.9"
+
 services:
-  frontend:
-    build: ./frontend
-    container_name: park-frontend
-    ports:
-      - "3000:80"
+  db:
+    image: mysql:8.0
+    container_name: brandspec-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: brandspec
+      TZ: Asia/Shanghai
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
     restart: unless-stopped
     networks:
       - park-net
+
+  backend:
+    build: ./backend
+    container_name: brandspec-backend
+    environment:
+      DATABASE_URL: mysql://root:root@db:3306/brandspec
+      JWT_SECRET: brandspec-compose-secret-change-me
+      PORT: 3001
+      LOG_LEVEL: info
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - park-net
+
+  frontend:
+    build: ./frontend
+    container_name: brandspec-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - park-net
+
+volumes:
+  db-data:
+
 networks:
   park-net:
     driver: bridge

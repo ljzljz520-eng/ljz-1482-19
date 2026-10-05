@@ -1,9 +1,12 @@
 node_modules
+**/node_modules
 npm-debug.log
 yarn.lock
 pnpm-lock.yaml
 frontend/dist
+backend/dist
 .git
 .vercel
 tmp
 .cache
+*.log

@@ -1,0 +1,31 @@
+{
+  "name": "brandspec-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Brand specification service: token validation, versioning, project bindings",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "seed": "tsx src/seed.ts",
+    "test:brand": "tsx src/brand/selftest.ts",
+    "smoke": "tsx src/smoke.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "2.4.3",
+    "express": "4.21.2",
+    "jsonwebtoken": "9.0.2",
+    "prisma": "5.22.0",
+    "winston": "3.17.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.6",
+    "@types/express": "4.17.21",
+    "@types/jsonwebtoken": "9.0.7",
+    "@types/node": "20.14.0",
+    "tsx": "4.19.2",
+    "typescript": "5.5.4"
+  }
+}

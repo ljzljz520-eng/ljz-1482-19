@@ -1,0 +1,71 @@
+// BrandSpec — 品牌规范服务数据模型
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+/// 品牌版本：tokens 为“用户可编辑令牌树”（不含 system.* 保留命名空间）。
+/// revision 为乐观锁：发布/保存必须携带 expectedRevision，防止两个管理员并发覆盖。
+model BrandVersion {
+  id          String    @id @default(cuid())
+  name        String
+  version     String // 语义化版本号，如 1.0.0
+  status      String    @default("draft") // draft | published | archived
+  revision    Int       @default(1)
+  tokens      Json
+  contentHash String    @default("") // 解析后令牌的 sha256，内容寻址
+  artifactCss String?   @db.LongText // 发布时生成的“编译时”样式产物
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  publishedAt DateTime?
+
+  @@unique([name, version])
+  @@index([status, publishedAt])
+}
+
+/// 项目与品牌的绑定：follow = 跟随最新发布；pin = 固定到指定版本。
+model Project {
+  id              String  @id @default(cuid())
+  slug            String  @unique
+  name            String
+  bindMode        String  @default("follow") // follow | pin
+  pinnedVersionId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/// 成片字幕审批：颜色快照在批准时刻固化。
+/// 品牌升级后（项目 follow 到新版本），已批准字幕仍渲染 snapshotColor，
+/// 状态由“approvedVersionId == 当前生效版本”动态推导为 needs_review，必须复核后才变色。
+model SubtitleApproval {
+  id                String   @id @default(cuid())
+  projectId         String
+  content           String
+  approvedVersionId String
+  snapshotColor     String
+  approvedBy        String
+  approvedAt        DateTime @default(now())
+
+  @@index([projectId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String
+  action    String // publish | bind | review | create_draft | approve_subtitle
+  detail    Json
+  createdAt DateTime @default(now())
+
+  @@index([action, createdAt])
+}
