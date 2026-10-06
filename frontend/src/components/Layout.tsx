@@ -1,12 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { ReactNode, useMemo } from "react";
 import { useUIStore } from "@/store/uiStore";
+import BrandBadge from "@/components/BrandBadge";
 import clsx from "clsx";
 
 const navItems = [
   { path: "/", label: "公园总览" },
   { path: "/audiovisual", label: "视听体验" },
-  { path: "/timeline", label: "时间轴" }
+  { path: "/timeline", label: "时间轴" },
+  { path: "/brand", label: "品牌规范" }
 ];
 
 const Layout = ({ children }: { children: ReactNode }) => {
@@ -45,6 +47,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             ))}
           </nav>
           <div className="flex items-center gap-3">
+            <BrandBadge />
             <button
               onClick={toggleMenu}
               className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 hover:border-primary hover:text-primary transition"

@@ -1,13 +1,57 @@
-version: "3.9"
 services:
+  db:
+    image: mysql:8.0
+    container_name: brand-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: brand
+      TZ: Asia/Shanghai
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - brand-net
+
+  backend:
+    build: ./backend
+    container_name: brand-backend
+    environment:
+      DB_TYPE: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: brand
+      ADMIN_USER: admin
+      ADMIN_PASSWORD: "123456"
+      TOKEN_SECRET: brand-spec-prod-secret
+      PORT: "4000"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    networks:
+      - brand-net
+
   frontend:
     build: ./frontend
-    container_name: park-frontend
+    container_name: brand-frontend
+    depends_on:
+      - backend
     ports:
       - "3000:80"
-    restart: unless-stopped
     networks:
-      - park-net
+      - brand-net
+
+volumes:
+  db-data:
+
 networks:
-  park-net:
+  brand-net:
     driver: bridge
